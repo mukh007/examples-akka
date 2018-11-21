@@ -40,7 +40,6 @@ case class NameResponse(name: String)
 class AskActor(name: String)(implicit to: Timeout, ec: ExecutionContext) extends Actor with LazyLogging {
   override def receive: Receive = {
     case AskName =>
-      //Thread.sleep(5000) // goes to dead letters bcoz of termination
       logger.debug(s"Received : $name by $self")
       sender ? NameResponse(name)
     case AskNameOf(other) =>
