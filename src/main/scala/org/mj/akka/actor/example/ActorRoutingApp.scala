@@ -3,8 +3,9 @@ package org.mj.akka.actor.example
 import akka.actor._
 import akka.routing.{ActorRefRoutee, FromConfig, RoundRobinRoutingLogic, Router}
 import com.typesafe.config.ConfigFactory
+import com.typesafe.scalalogging.LazyLogging
 
-object ActorRoutingApp extends App {
+object ActorRoutingApp extends App with LazyLogging {
   val sys = ActorSystem("ActorRoutingApp", ConfigFactory.load("ActorRoutingApp.conf").withFallback(ConfigFactory.load()))
   val master = sys.actorOf(Props[Master], "master")
   for (i <- 0 to 9) { // 0->a, 1->b, 2->c, 3->d, 4->e, 5->a, 6->b, ...
@@ -20,7 +21,7 @@ object ActorRoutingApp extends App {
   sys.terminate()
 }
 
-class Master extends Actor {
+class Master extends Actor with LazyLogging {
   private var router = {
     val routes = Vector.fill(5) {
       val r = context.actorOf(Props[Worker])
@@ -43,10 +44,10 @@ class Master extends Actor {
 }
 
 
-class Worker extends Actor {
+class Worker extends Actor with LazyLogging {
   def receive: PartialFunction[Any, Unit] = {
     case w: Work =>
-      println(s"Job '${w.job}' received at ${self.path}")
+      logger.info(s"Job '${w.job}' received at ${self.path}")
   }
 }
 
