@@ -42,23 +42,28 @@
             <version>3.0.3</version>
             <scope>test</scope>
         </dependency>
-        <!--<dependency>-->
-            <!--<groupId>com.typesafe.akka</groupId>-->
-            <!--<artifactId>akka-cluster_${scala.binary.version}</artifactId>-->
-            <!--<version>${akka.version}</version>-->
-        <!--</dependency>-->
-        <!--<dependency>-->
-            <!--<groupId>com.typesafe.akka</groupId>-->
-            <!--<artifactId>akka-cluster-sharding_${scala.binary.version}</artifactId>-->
-            <!--<version>${akka.version}</version>-->
-        <!--</dependency>-->
+        <dependency>
+            <groupId>com.typesafe.akka</groupId>
+            <artifactId>akka-cluster_${scala.binary.version}</artifactId>
+            <version>${akka.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.typesafe.akka</groupId>
+            <artifactId>akka-cluster-sharding_${scala.binary.version}</artifactId>
+            <version>${akka.version}</version>
+        </dependency>
 
         <!--&lt;!&ndash;Bootstrap cluster using ZK&ndash;&gt;-->
-        <!--<dependency>-->
-            <!--<groupId>com.sclasen</groupId>-->
-            <!--<artifactId>akka-zk-cluster-seed_${scala.binary.version}</artifactId>-->
-            <!--<version>0.1.8</version>-->
-        <!--</dependency>-->
+        <dependency>
+            <groupId>com.sclasen</groupId>
+            <artifactId>akka-zk-cluster-seed_${scala.binary.version}</artifactId>
+            <version>0.1.8</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.dnvriend</groupId>
+            <artifactId>akka-persistence-inmemory_${scala.binary.version}</artifactId>
+            <version>2.5.1.1</version>
+        </dependency>
 
         <!--sweet updated AKKA HBASE Persistence. This is Tony's build, see the ALM apps project. Change this if we ever update Akka.-->
         <dependency>
