@@ -1,60 +1,23 @@
 <configuration>
 
-    <property name="appName" value="test"/>
-    <property name="separator" value="_"/>
-    <property name="baseFolder" value="./target/log/"/>
-
-    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>%d{ISO8601,UTC} %-5level %logger{5}: %m%n%rEx</pattern>
-        </encoder>
-    </appender>
-    <appender name="ALL_FILE" class="ch.qos.logback.core.FileAppender">
-        <file>${baseFolder}${appName}${separator}all.log</file>
-        <encoder>
-            <pattern>%d{ISO8601,UTC} %-5level [%thread] %logger{5}: %m%n%rEx</pattern>
-        </encoder>
-    </appender>
-    <appender name="ONLY_ISSUES" class="ch.qos.logback.core.FileAppender">
-        <file>${baseFolder}${appName}${separator}issue.log</file>
-        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
-            <level>WARN</level>
-        </filter>
-        <encoder>
-            <pattern>%d{ISO8601,UTC} %-5level [%thread] %logger{5}: %m%n%rEx</pattern>
-        </encoder>
-    </appender>
-    <appender name="ONLY_METRICS" class="ch.qos.logback.core.FileAppender">
-        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
-            <level>INFO</level>
-        </filter>
-        <file>${baseFolder}${appName}${separator}metric.log</file>
-        <encoder>
-            <pattern>%d{ISO8601,UTC} %-5level [%thread] %logger{5}: %m%n%rEx</pattern>
-        </encoder>
-    </appender>
-    <appender name="ONLY_CI" class="ch.qos.logback.core.FileAppender">
-        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
-            <level>INFO</level>
-        </filter>
-        <file>${baseFolder}${appName}${separator}ci.log</file>
-        <encoder>
-            <pattern>%d{ISO8601,UTC} %-5level %logger{5}: %m%n%rEx</pattern>
+            <!-- See http://logback.qos.ch/manual/layouts.html -->
+            <!-- See http://doc.akka.io/docs/akka/2.0/scala/logging.html -->
+            <pattern>%date{ISO8601} %-5level %logger{36} - %msg%n</pattern>
         </encoder>
     </appender>
 
-
-    <logger name="com.oracle.ci.metrics" level="INFO" additivity="false">
-        <appender-ref ref="ONLY_METRICS"/>
-    </logger>
-    <logger name="com.oracle.ci" level="DEBUG">
-        <appender-ref ref="ONLY_CI"/>
+    <logger name="com.mlh.clustering" level="debug" additivity="false">
+        <appender-ref ref="console" />
     </logger>
 
-    <root level="DEBUG">
-        <appender-ref ref="ALL_FILE"/>
-        <appender-ref ref="STDOUT"/>
-        <appender-ref ref="ONLY_ISSUES"/>
+    <logger name="akka" level="info" additivity="false">
+        <appender-ref ref="console" />
+    </logger>
+
+    <root level="info">
+        <appender-ref ref="console"/>
     </root>
 
 </configuration>
