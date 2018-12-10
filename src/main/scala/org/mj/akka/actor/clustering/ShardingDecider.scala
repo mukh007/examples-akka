@@ -11,12 +11,14 @@ object ShardingDecider {
 
   def props: Props = Props[ShardingDecider]
 
+  // Sharding logic goes here
   def extractShardId: ExtractShardId = {
-    case WhereShouldIGo(group, _) => (group.id.toInt % 2).toString
+    case DoSomeWork(workGroup, _) => (workGroup.id.toInt % 2).toString
   }
 
+  // Routing logic goes here
   def extractEntityId: ExtractEntityId = {
-    case msg@WhereShouldIGo(group, _) => (group.id.toString, msg)
+    case msg@DoSomeWork(workGroup, _) => (workGroup.id.toString, msg)
   }
 }
 
@@ -24,12 +26,12 @@ class ShardingDecider extends Actor with ActorLogging {
   private implicit val ec: ExecutionContext = context.dispatcher
 
   def receive: Receive = {
-    case WhereShouldIGo(group, item) =>
+    case DoSomeWork(workGroup, workItem) =>
       val curSender = sender
       Future {
-        val result = Decisions.whereShouldContainerGo(group, item)
-        log.info("Working on group {} for item {}: {} by {}", group.id, item.id, result.value, self.path)
-        curSender ! result
+        val workResult = Decisions.workingOnItem(workGroup, workItem)
+        log.info(s"Work g-${workGroup.id}_i-${workItem.id}:r${workResult.value} by actor ${self.path.name}") // log.debug("Working on workGroup {} for workItem {}: {} by {}", workGroup.id, workItem.id, workResult.value, self.path)
+        curSender ! workResult
       }
   }
 }

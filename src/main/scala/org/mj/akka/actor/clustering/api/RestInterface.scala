@@ -13,24 +13,26 @@ import scala.concurrent.ExecutionContext
 //import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
 
-class RestInterface(decider: ActorRef, exposedPort: Int) extends Actor with HttpServiceBase with ActorLogging {
+class RestInterface(decider: ActorRef, portId: Int) extends Actor with HttpServiceBase with ActorLogging {
   private implicit val system: ActorSystem = context.system
   private implicit val ec: ExecutionContext = context.dispatcher
 
   def receive: Receive = runRoute(route)
 
   private val route: Route = {
-    path("requestId" / IntNumber / "group" / Segment / "item" / Segment) { (requestId, group, item) =>
-      get {
-        complete {
-          log.info(s"Request $requestId for group $group and item $item")
-          val junction = WorkGroup(group)
-          val container = WorkItem(item)
-          decider.ask(WhereShouldIGo(junction, container))(5 seconds).mapTo[WorkResult]
+    path("requestId" / IntNumber / "group" / Segment / "item" / Segment) {
+      (requestId, group, item) =>
+        get {
+          complete {
+            log.info(s"Request $requestId for group $group and item $item")
+            val workGroup = WorkGroup(group)
+            val workItem = WorkItem(item)
+            val workResult = decider.ask(DoSomeWork(workGroup, workItem))(5 seconds).mapTo[WorkResult]
+            workResult
+          }
         }
-      }
     }
   }
 
-  IO(Http) ! Http.Bind(self, interface = "0.0.0.0", port = exposedPort)
+  IO(Http) ! Http.Bind(self, interface = "0.0.0.0", port = portId)
 }

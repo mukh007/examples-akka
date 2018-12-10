@@ -26,7 +26,6 @@
     </properties>
 
     <dependencies>
-
         <dependency>
             <groupId>com.typesafe.akka</groupId>
             <artifactId>akka-slf4j_2.11</artifactId>
@@ -91,7 +90,11 @@
             <artifactId>akka-persistence-inmemory_${scala.binary.version}</artifactId>
             <version>2.5.1.1</version>
         </dependency>
-
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+            <version>2.10</version>
+        </dependency>
 
         <dependency>
             <groupId>io.spray</groupId>

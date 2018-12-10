@@ -5,8 +5,8 @@ import Messages._
 
 class DecidersGuardian extends Actor {
   override def receive: Receive = {
-    case m: WhereShouldIGo =>
-      val name = s"J${m.group.id}"
+    case m: DoSomeWork =>
+      val name = s"J${m.groupId.id}"
       val actor = context.child(name) getOrElse context.actorOf(Props[ShardingDecider], name)
       actor forward m
   }

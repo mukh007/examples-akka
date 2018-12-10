@@ -1,11 +1,15 @@
 package org.mj.akka.actor.clustering
 
+import org.joda.time.DateTime
+import org.joda.time.format.{DateTimeFormat, DateTimeFormatter}
 import org.mj.akka.actor.clustering.Messages.{WorkGroup, WorkItem, WorkResult}
 
 object Decisions {
-  def whereShouldContainerGo(group: WorkGroup, item: WorkItem): WorkResult = {
+  private val timePattern = "ss.SSSZ" // "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+  private val timeFormat: DateTimeFormatter = DateTimeFormat.forPattern(timePattern)
+
+  def workingOnItem(group: WorkGroup, item: WorkItem): WorkResult = {
     Thread.sleep(5) // just to simulate resource hunger
-    val seed = util.Random.nextInt(10000)
-    WorkResult(s"CVR_${group.id}_$seed")
+    WorkResult(s"w_${group.id}:${item.id}@${timeFormat.print(DateTime.now)}")
   }
 }
