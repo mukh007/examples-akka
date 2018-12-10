@@ -8,7 +8,7 @@ import org.mj.akka.actor.clustering.ShardingDecider
 
 object ShardedApp extends App {
   val config = ConfigFactory.load("sharded")
-  private implicit val system = ActorSystem(config getString "application.name", config)
+  private implicit val system: ActorSystem = ActorSystem(config getString "application.name", config)
 
   ZookeeperClusterSeed(system).join()
 
@@ -21,5 +21,6 @@ object ShardedApp extends App {
   )
 
   val decider = ClusterSharding(system).shardRegion(ShardingDecider.name)
+
   system.actorOf(Props(new RestInterface(decider, config getInt "application.portId")))
 }

@@ -10,6 +10,8 @@ object Messages {
 
   case class DoSomeWork(groupId: WorkGroup, workItem: WorkItem)
 
+  case class DoSomeWorkRouted(groupId: WorkGroup, workItem: WorkItem)
+
   case class WorkResult(value: String)
 
   object WorkResult {

@@ -19,36 +19,38 @@ object ActorRoutingApp extends App with LazyLogging {
 
   Thread sleep 1000
   sys.terminate()
-}
 
-class Master extends Actor with LazyLogging {
-  private var router = {
-    val routes = Vector.fill(5) {
-      val r = context.actorOf(Props[Worker])
-      context watch r
-      ActorRefRoutee(r)
+
+  class Master extends Actor with LazyLogging {
+    private var router = {
+      val routes = Vector.fill(5) {
+        val r = context.actorOf(Props[Worker])
+        context watch r
+        ActorRefRoutee(r)
+      }
+      // The Router is immutable and the RoutingLogic is thread safe; meaning that they can also be used outside of actors.
+      Router(RoundRobinRoutingLogic(), routes)
     }
-    // The Router is immutable and the RoutingLogic is thread safe; meaning that they can also be used outside of actors.
-    Router(RoundRobinRoutingLogic(), routes)
+
+    def receive: PartialFunction[Any, Unit] = {
+      case w: Work =>
+        router.route(w, sender())
+      case Terminated(a) =>
+        router = router.removeRoutee(a)
+        val r = context.actorOf(Props[Worker])
+        context watch r
+        router = router.addRoutee(r)
+    }
   }
 
-  def receive: PartialFunction[Any, Unit] = {
-    case w: Work =>
-      router.route(w, sender())
-    case Terminated(a) =>
-      router = router.removeRoutee(a)
-      val r = context.actorOf(Props[Worker])
-      context watch r
-      router = router.addRoutee(r)
+
+  class Worker extends Actor with LazyLogging {
+    def receive: PartialFunction[Any, Unit] = {
+      case w: Work =>
+        logger.info(s"Job '${w.job}' received at ${self.path}")
+    }
   }
+
+  case class Work(job: String)
+
 }
-
-
-class Worker extends Actor with LazyLogging {
-  def receive: PartialFunction[Any, Unit] = {
-    case w: Work =>
-      logger.info(s"Job '${w.job}' received at ${self.path}")
-  }
-}
-
-case class Work(job: String)
