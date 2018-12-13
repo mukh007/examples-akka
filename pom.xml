@@ -122,25 +122,6 @@
             <version>${spray.version}</version>
         </dependency>
 
-        <!--sweet updated AKKA HBASE Persistence. This is Tony's build, see the ALM apps project. Change this if we ever update Akka.-->
-        <dependency>
-            <groupId>com.oracle.ci</groupId>
-            <artifactId>akka-persistence-hbase_${scala.binary.version}</artifactId>
-            <version>0.4.5</version>
-            <exclusions>
-                <!-- Replaced by log4j-over-slf4j to avoid ClassNotFoundException -->
-                <exclusion>
-                    <groupId>log4j</groupId>
-                    <artifactId>log4j</artifactId>
-                </exclusion>
-                <!-- Replaced by logback-classic to avoid ClassNotFoundException -->
-                <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-log4j12</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
         <!-- Logback, as the backend of akka-slf4j -->
         <dependency>
             <groupId>ch.qos.logback</groupId>

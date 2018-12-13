@@ -1,10 +1,11 @@
 package org.mj.akka.actor.clustering.api
 
-import akka.actor.{ActorSystem, Props}
+import akka.actor.{ActorRef, ActorSystem, Props}
 import akka.cluster.seed.ZookeeperClusterSeed
 import akka.cluster.sharding.{ClusterSharding, ClusterShardingSettings}
+import akka.routing.FromConfig
 import com.typesafe.config.ConfigFactory
-import org.mj.akka.actor.clustering.ShardingDecider
+import org.mj.akka.actor.clustering.{ShardingDecider, WorkRouter}
 
 object ShardedApp extends App {
   val config = ConfigFactory.load("sharded")
@@ -12,15 +13,18 @@ object ShardedApp extends App {
 
   ZookeeperClusterSeed(system).join()
 
+  private val workRouter: ActorRef = system.actorOf(FromConfig.props(Props[WorkRouter]), "workRouter")
+
   ClusterSharding(system).start(
     typeName = ShardingDecider.name,
-    entityProps = ShardingDecider.props,
+    //entityProps = ShardingDecider.props,
+    entityProps = Props(new ShardingDecider(workRouter)),
     settings = ClusterShardingSettings(system),
     extractShardId = ShardingDecider.extractShardId,
     extractEntityId = ShardingDecider.extractEntityId
   )
 
-  val decider = ClusterSharding(system).shardRegion(ShardingDecider.name)
+  private val decider = ClusterSharding(system).shardRegion(ShardingDecider.name)
 
   system.actorOf(Props(new RestInterface(decider, config getInt "application.portId")))
 }

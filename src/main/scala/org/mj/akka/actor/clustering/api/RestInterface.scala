@@ -29,10 +29,9 @@ class RestInterface(decider: ActorRef, portId: Int) extends Actor with HttpServi
             log.info(s"Request $requestId for group $group and item $item")
             val workGroup = WorkGroup(group)
             val workItem = WorkItem(item)
-            val workResult = decider.ask(DoSomeWork(workGroup, workItem))(5 seconds).mapTo[WorkResult]
-
-//            val res = (decider ? workItem).mapTo[WorkResult]
-//            val workResult = decider.ask(DoSomeWorkRouted(workGroup, workItem))(5 seconds).mapTo[WorkResult]
+            val work = DoSomeWork(workGroup, workItem)
+            //val work = DoSomeWorkRouted(workGroup, workItem)
+            val workResult = (decider ? work).mapTo[WorkResult]
             workResult
           }
         }

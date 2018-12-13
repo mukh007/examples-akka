@@ -2,7 +2,9 @@ package org.mj.akka.actor.clustering
 
 import akka.actor.{Actor, ActorLogging, ActorRef, ActorSystem, Props}
 import akka.cluster.sharding.ShardRegion.{ExtractEntityId, ExtractShardId}
-import akka.routing.FromConfig
+import akka.pattern._
+import scala.concurrent.duration._
+import akka.util.Timeout
 import org.mj.akka.actor.clustering.Messages._
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -10,11 +12,11 @@ import scala.concurrent.{ExecutionContext, Future}
 object ShardingDecider {
   def name = "ShardingDecider"
 
-  def props: Props = Props[ShardingDecider]
+  //def props: Props = Props[ShardingDecider]
 
   // Sharding logic goes here
   def extractShardId: ExtractShardId = {
-    case DoSomeWork(workGroup, _) => (workGroup.id.toInt % 2).toString
+    case DoSomeWork(workGroup, _) => workGroup.id
 
     case DoSomeWorkRouted(workGroup, _) => (workGroup.id.toInt % 2).toString
   }
@@ -27,12 +29,12 @@ object ShardingDecider {
   }
 }
 
-class ShardingDecider extends Actor with ActorLogging {
+class ShardingDecider(workRouter: ActorRef) extends Actor with ActorLogging {
   private implicit val ec: ExecutionContext = context.dispatcher
   private implicit val sys: ActorSystem = context.system
+//  private implicit val to: Timeout = 5.seconds
 
-  //val router: ActorRef = sys.actorOf(FromConfig.props(Props[WorkRouter]), "router1")
-  //val router: ActorRef = sys.actorOf(Props[WorkRouter].withRouter(FromConfig()), "router1")
+  //val workRouter: ActorRef = context.actorOf(Props[WorkRouter], "workRouter")
 
   def receive: Receive = {
     case DoSomeWork(workGroup, workItem) =>
@@ -43,29 +45,8 @@ class ShardingDecider extends Actor with ActorLogging {
         curSender ! workResult
       }
     case work: DoSomeWorkRouted =>
-      val curSender = sender
-      Future {
-        val workResult = Decisions.workingOnItem(work.groupId, work.workItem)
-        log.info(s"Work g-${work.groupId.id}_i-${work.workItem.id}:r${workResult.value} by actor ${self.path.name}")
-        curSender ! workResult
-      }
-    //      router ! work
-    //    case workRes: WorkResult =>
-    //      sender ! workRes
-  }
-}
-
-
-class WorkRouter extends Actor with ActorLogging {
-  private implicit val ec: ExecutionContext = context.dispatcher
-
-  override def receive: Receive = {
-    case w: DoSomeWorkRouted =>
-      val curSender = sender
-      Future {
-        val workResult = Decisions.workingOnItem(w.groupId, w.workItem)
-        log.info(s"WorkRouter g-${w.groupId.id}_i-${w.workItem.id}:r${workResult.value} by actor ${self.path.name}") // log.debug("Working on workGroup {} for workItem {}: {} by {}", workGroup.id, workItem.id, workResult.value, self.path)
-        curSender ! workResult
-      }
+      workRouter forward  work
+    case workRes: WorkResult =>
+      sender ! workRes
   }
 }

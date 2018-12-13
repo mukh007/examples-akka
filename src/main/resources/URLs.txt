@@ -1,6 +1,6 @@
-http://127.0.0.1:8080/requestId/1/group/1/item/1
-http://127.0.0.1:8080/requestId/2/group/2/item/4
-http://127.0.0.1:8080/requestId/3/group/3/item/5
-http://127.0.0.1:8080/requestId/4/group/4/item/2
-http://127.0.0.1:8080/requestId/5/group/5/item/7
-http://127.0.0.1:8080/requestId/6/group/6/item/3
+http://127.0.0.1:8080/requestId/1/group/red-1/item/1
+http://127.0.0.1:8080/requestId/2/group/blu-1/item/2
+http://127.0.0.1:8080/requestId/3/group/red-1/item/3
+http://127.0.0.1:8080/requestId/4/group/blu-1/item/4
+http://127.0.0.1:8080/requestId/5/group/red-1/item/5
+http://127.0.0.1:8080/requestId/6/group/blu-1/item/6
