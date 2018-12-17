@@ -22,7 +22,7 @@ class RestInterface(decider: ActorRef, portId: Int) extends Actor with HttpServi
   def receive: Receive = runRoute(route)
 
   private val route: Route = {
-    path("requestId" / IntNumber / "group" / Segment / "item" / Segment) {
+    path("shard-requestId" / IntNumber / "group" / Segment / "item" / Segment) {
       (requestId, group, item) =>
         get {
           complete {
@@ -30,6 +30,20 @@ class RestInterface(decider: ActorRef, portId: Int) extends Actor with HttpServi
             val workGroup = WorkGroup(group)
             val workItem = WorkItem(item)
             val work = DoSomeWork(workGroup, workItem)
+            //val work = DoSomeWorkRouted(workGroup, workItem)
+            val workResult = (decider ? work).mapTo[WorkResult]
+            workResult
+          }
+        }
+    } ~
+    path("route-requestId" / IntNumber / "group" / Segment / "item" / Segment) {
+      (requestId, group, item) =>
+        get {
+          complete {
+            log.info(s"Request $requestId for group $group and item $item")
+            val workGroup = WorkGroup(group)
+            val workItem = WorkItem(item)
+            val work = DoSomeWorkRouted(workGroup, workItem)
             //val work = DoSomeWorkRouted(workGroup, workItem)
             val workResult = (decider ? work).mapTo[WorkResult]
             workResult

@@ -18,7 +18,7 @@ object ShardingDecider {
   def extractShardId: ExtractShardId = {
     case DoSomeWork(workGroup, _) => workGroup.id
 
-    case DoSomeWorkRouted(workGroup, _) => (workGroup.id.toInt % 2).toString
+    case DoSomeWorkRouted(workGroup, _) => workGroup.id
   }
 
   // Routing logic goes here
