@@ -30,7 +30,6 @@ class RestInterface(decider: ActorRef, portId: Int) extends Actor with HttpServi
             val workGroup = WorkGroup(group)
             val workItem = WorkItem(item)
             val work = DoSomeWork(workGroup, workItem)
-            //val work = DoSomeWorkRouted(workGroup, workItem)
             val workResult = (decider ? work).mapTo[WorkResult]
             workResult
           }
@@ -44,7 +43,6 @@ class RestInterface(decider: ActorRef, portId: Int) extends Actor with HttpServi
             val workGroup = WorkGroup(group)
             val workItem = WorkItem(item)
             val work = DoSomeWorkRouted(workGroup, workItem)
-            //val work = DoSomeWorkRouted(workGroup, workItem)
             val workResult = (decider ? work).mapTo[WorkResult]
             workResult
           }

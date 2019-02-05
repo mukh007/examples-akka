@@ -1,11 +1,14 @@
 **`Akka Examples`** 
+<h2>Startup</h2>
 <code>
-<br>java -Dapplication.portId=8080 -jar target/examples-akka-1.1.1-uber.jar
-<br>java -Dapplication.portId=8081 -jar target/examples-akka-1.1.1-uber.jar
-<br>java -Dapplication.portId=8082 -jar target/examples-akka-1.1.1-uber.jar
-<code>
+java -Dapplication.portId=8080 -jar target/examples-akka-1.1.1-uber.jar<br>
+java -Dapplication.portId=8081 -jar target/examples-akka-1.1.1-uber.jar<br>
+java -Dapplication.portId=8082 -jar target/examples-akka-1.1.1-uber.jar
+</code>
 <br>
-
+<h2>Usage</h2>
+<code>cat src/main/resources/URLs.txt | parallel -j 5 'ab -ql -n 2000 -c 1 -k {}' | grep 'Requests per second'</code>
+<br><br>
 - Add shard region group sub group
 - Akka emoting to have more actors per shardRegion
 - In memory persisteence
